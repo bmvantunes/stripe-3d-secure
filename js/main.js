@@ -13,8 +13,10 @@ function onClick(cardNumber) {
   };
 
   doPayment(paymentRequest).then((result) => {
-    this.onPaymentTokenReceived(result);
+    console.log('result --> ', result);
+    alert('Success: Token is: ' + result.id);
   }).catch((error) => {
     console.error(error);
+    alert('Ups, something wrong, sorry! :(');
   });
 }
