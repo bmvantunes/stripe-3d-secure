@@ -4,8 +4,8 @@
  */
 function doPayment(paymentRequest) {
   return new Promise((resolve, reject) => {
-    const onCreateCardCallback = this.create3DSecure(paymentRequest, resolve, reject);
-    return this.Stripe.source.create({
+    const onCreateCardCallback = create3DSecure(paymentRequest, resolve, reject);
+    return Stripe.source.create({
       type: 'card',
       card: {
         number: paymentRequest.cardNumber,
@@ -18,14 +18,14 @@ function doPayment(paymentRequest) {
 }
 
 function create3DSecure(paymentRequest, resolve, reject) {
-  const onCreate3DSecureCallback = this.createIframe(paymentRequest, resolve, reject);
+  const onCreate3DSecureCallback = createIframe(paymentRequest, resolve, reject);
   return (status, cardResponse) => {
     if (status !== 200 || cardResponse.error) {  // problem
       reject(cardResponse.error);
     } else if (cardResponse.card.three_d_secure === 'not_supported') {
       resolve(cardResponse.id);
     } else {
-      this.Stripe.source.create({
+      Stripe.source.create({
         type: 'three_d_secure',
         amount: paymentRequest.amount,
         currency: paymentRequest.currency,
@@ -44,8 +44,8 @@ function createIframe(paymentRequest, resolve, reject) {
       paymentRequest.nativeElement.innerHTML =
         '<iframe style="width:100%; height: 800px;" frameborder="0" src="' + stripe3dsResponse.redirect.url + '"></iframe>';
 
-      const onPollCallbackReal = this.onPollCallback(paymentRequest, resolve, reject);
-      this.Stripe.source.poll(stripe3dsResponse.id, stripe3dsResponse.client_secret, onPollCallbackReal);
+      const onPollCallbackReal = onPollCallback(paymentRequest, resolve, reject);
+      Stripe.source.poll(stripe3dsResponse.id, stripe3dsResponse.client_secret, onPollCallbackReal);
     }
   };
 }
