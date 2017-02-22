@@ -18,13 +18,18 @@ function doPayment(paymentRequest) {
 }
 
 function create3DSecure(paymentRequest, resolve, reject) {
-  const onCreate3DSecureCallback = createIframe(paymentRequest, resolve, reject);
   return (status, cardResponse) => {
+    console.log('create3DSecure --> paymentRequest', paymentRequest);
+    console.log('create3DSecure --> status', status);
+    console.log('create3DSecure --> createSourceResponse', cardResponse);
+
     if (status !== 200 || cardResponse.error) {  // problem
       reject(cardResponse.error);
     } else if (cardResponse.card.three_d_secure === 'not_supported') {
       resolve(cardResponse.id);
     } else {
+      const onCreate3DSecureCallback = createIframe(paymentRequest, resolve, reject);
+
       Stripe.source.create({
         type: 'three_d_secure',
         amount: paymentRequest.amount,
@@ -38,6 +43,10 @@ function create3DSecure(paymentRequest, resolve, reject) {
 
 function createIframe(paymentRequest, resolve, reject) {
   return (status, stripe3dsResponse) => {
+    console.log('Create the Iframe --> paymentRequest', paymentRequest);
+    console.log('Create the Iframe --> status', status);
+    console.log('Create the Iframe --> stripe3dsResponse', stripe3dsResponse);
+
     if (status !== 200 || stripe3dsResponse.error) {  // problem
       reject(stripe3dsResponse.error);
     } else {
@@ -52,11 +61,16 @@ function createIframe(paymentRequest, resolve, reject) {
 
 function onPollCallback(paymentRequest, resolve, reject) {
   return (status, source) => {
+    console.log('onPoolCallback --> ', source);
+
     if (status !== 200 || source.error) {
+      console.log('onPoolCallback --> REJECT --> not 200 or error --> ', source);
       reject(source.error);
     } else if (source.status === 'canceled' || source.status === 'consumed' || source.status === 'failed') {
+      console.log('onPoolCallback --> REJECT --> canceled/consumed/fail --> ', source);
       reject(source.status);
     } else if (source.three_d_secure.authenticated && source.status === 'chargeable') {
+      console.log('onPoolCallback --> SUCCESS --> ', source);
       paymentRequest.nativeElement.innerHTML = '';
       resolve(source);
     }
