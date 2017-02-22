@@ -30,7 +30,7 @@ function create3DSecure(paymentRequest, resolve, reject) {
         amount: paymentRequest.amount,
         currency: paymentRequest.currency,
         three_d_secure: { card: cardResponse.id },
-        redirect: { return_url: window.location.origin }
+        redirect: { return_url: window.location.href }
       }, onCreate3DSecureCallback);
     }
   };
