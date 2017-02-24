@@ -25,9 +25,9 @@ function create3DSecure(paymentRequest, resolve, reject) {
 
     if (status !== 200 || cardResponse.error) {  // problem
       reject(cardResponse.error);
-    } else if (cardResponse.card.three_d_secure === 'not_supported') {
+    } else if (cardResponse.card.three_d_secure === 'not_supported' && cardResponse.status === 'chargeable') {
       resolve(cardResponse);
-    } else {
+    } else if(cardResponse.card.three_d_secure === 'optional' || cardResponse.card.three_d_secure === 'required') {
       const onCreate3DSecureCallback = createIframe(paymentRequest, resolve, reject);
 
       Stripe.source.create({
@@ -37,6 +37,9 @@ function create3DSecure(paymentRequest, resolve, reject) {
         three_d_secure: { card: cardResponse.id },
         redirect: { return_url: window.location.href }
       }, onCreate3DSecureCallback);
+    }
+    else {
+      reject(cardResponse);
     }
   };
 }
