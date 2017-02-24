@@ -69,7 +69,8 @@ function onPollCallback(paymentRequest, resolve, reject) {
     } else if (source.status === 'canceled' || source.status === 'consumed' || source.status === 'failed') {
       console.log('onPoolCallback --> REJECT --> canceled/consumed/fail --> ', source);
       reject(source.status);
-    } else if (source.three_d_secure.authenticated && source.status === 'chargeable') {
+    } else if (/* source.three_d_secure.authenticated && */ source.status === 'chargeable') {
+      /* some cards do not need to be authenticated, like the 4242 4242 4242 4242 */
       console.log('onPoolCallback --> SUCCESS --> ', source);
       paymentRequest.nativeElement.innerHTML = '';
       resolve(source);
