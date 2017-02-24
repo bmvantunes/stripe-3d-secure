@@ -26,7 +26,7 @@ function create3DSecure(paymentRequest, resolve, reject) {
     if (status !== 200 || cardResponse.error) {  // problem
       reject(cardResponse.error);
     } else if (cardResponse.card.three_d_secure === 'not_supported') {
-      resolve(cardResponse.id);
+      resolve(cardResponse);
     } else {
       const onCreate3DSecureCallback = createIframe(paymentRequest, resolve, reject);
 
