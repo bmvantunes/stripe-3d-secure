@@ -65,18 +65,25 @@ function createIframe(paymentRequest, resolve, reject) {
 function onPollCallback(paymentRequest, resolve, reject) {
   return (status, source) => {
     console.log('onPoolCallback --> ', source);
+    const errorMessage = 'Sorry we got an error';
 
     if (status !== 200 || source.error) {
       console.log('onPoolCallback --> REJECT --> not 200 or error --> ', source);
+      paymentRequest.nativeElement.innerHTML = errorMessage;
       reject(source.error);
     } else if (source.status === 'canceled' || source.status === 'consumed' || source.status === 'failed') {
       console.log('onPoolCallback --> REJECT --> canceled/consumed/fail --> ', source);
+      paymentRequest.nativeElement.innerHTML = errorMessage;
       reject(source.status);
     } else if (/* source.three_d_secure.authenticated && */ source.status === 'chargeable') {
       /* some cards do not need to be authenticated, like the 4242 4242 4242 4242 */
       console.log('onPoolCallback --> SUCCESS --> ', source);
-      paymentRequest.nativeElement.innerHTML = '';
+      paymentRequest.nativeElement.innerHTML = 'All your card details are ok';
       resolve(source);
+    } else { 
+      // something completely weird happened 
+      paymentRequest.nativeElement.innerHTML = errorMessage;
+      reject(source.status);
     }
   };
 }
