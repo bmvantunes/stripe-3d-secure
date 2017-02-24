@@ -11,6 +11,8 @@ function onClick(cardNumber) {
     amount: 5000 * 100,
     nativeElement: document.querySelector('#iframe-payment')
   };
+  
+  paymentRequest.nativeElement.innerHTML = 'Loading... Please wait...';
 
   doPayment(paymentRequest).then((result) => {
     console.log('result --> ', result);
