@@ -16,9 +16,11 @@ function onClick(cardNumber) {
 
   doPayment(paymentRequest).then((result) => {
     console.log('result --> ', result);
+    paymentRequest.nativeElement.innerHTML = 'Success!!!! Your details are correct!!! :)';
     alert('Success: Token is: ' + result.id);
   }).catch((error) => {
     console.error(error);
+    paymentRequest.nativeElement.innerHTML = 'Ups! We can\t validate your details...';
     alert('Ups, something wrong, sorry! :(');
   });
 }
