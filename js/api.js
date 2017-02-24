@@ -80,10 +80,6 @@ function onPollCallback(paymentRequest, resolve, reject) {
       console.log('onPoolCallback --> SUCCESS --> ', source);
       paymentRequest.nativeElement.innerHTML = 'All your card details are ok';
       resolve(source);
-    } else { 
-      // something completely weird happened 
-      paymentRequest.nativeElement.innerHTML = errorMessage;
-      reject(source.status);
     }
   };
 }
